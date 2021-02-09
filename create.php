@@ -15,15 +15,14 @@ if (getenv("APP_CLIENT") !== false){
     
 }else{
     $configs = include('config.php');
-    $client=$configs['client_id'];
-    $secret=$configs['secret'];
+    $client=$configs['APP_CLIENT'];
+    $secret=$configs['APP_SECRET'];
 }
 
 $auth_64 = base64_encode("$client:$secret");
 $fullURL = $_SERVER['REQUEST_SCHEME'] .'://'. $_SERVER['HTTP_HOST'] .parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 
 //echo "client:$client";
-die();
 
 ?>
 
