@@ -1,3 +1,17 @@
+<?
+
+ini_set("session.cookie_domain", $_SERVER['SERVER_NAME']);
+session_set_cookie_params(0, '/', $_SERVER['SERVER_NAME']);
+if(!isset($_SESSION)) {
+	session_start();
+}
+
+//echo "P:".print_r($_POST,true);
+
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +23,7 @@
 
 <? 
 
-if (getenv("APP_CLIENT") !== false){
+/*f (getenv("APP_CLIENT") !== false){
     $client=getenv('APP_CLIENT');
     $secret=getenv('APP_SECRET');
     
@@ -17,23 +31,34 @@ if (getenv("APP_CLIENT") !== false){
     $configs = include('config.php');
     $client=$configs['APP_CLIENT'];
     $secret=$configs['APP_SECRET'];
-}
+}*/
 
-$auth_64 = base64_encode("$client:$secret");
 $fullURL = 'https://'. $_SERVER['HTTP_HOST'] .parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 
 //echo "client:$client";
 
 ?>
 
-<? if (!(isset($_GET['code']))) {?>
-    <a href="https://zoom.us/oauth/authorize?response_type=code&client_id=<?=$client?>&redirect_uri=<?=$fullURL?>">
-        <button>Zoom Control Authorize</button>
-    </a>
+<? if ((isset($_POST['client']))) {
+    $client=$_POST['client'];
+    $secret=$_POST['secret'];
+    $auth_64 = base64_encode("$client:$secret");
+    $_SESSION['auth_64']=$auth_64;
 
-<? }else{ ?>
+    header("Location: https://zoom.us/oauth/authorize?response_type=code&client_id=$client&redirect_uri=$fullURL");
+    exit();
+
+ }else if (!(isset($_GET['code']))) { ?>
+    
+    <form action="" method="post">
+        <div>client: <input type="text" name="client" id="client"></div>
+        <div>secret: <input type="text" name="secret" id="secret"></div>
+        <div><input type="submit" value="GO"></div>
+    </form>
+<?}else{ ?>
 <?
 
+$auth_64 = $_SESSION['auth_64'];
 $code = $_GET['code'];
 $req_url = "https://zoom.us/oauth/token?grant_type=authorization_code&code=$code&redirect_uri=$fullURL";
 

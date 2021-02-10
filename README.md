@@ -5,4 +5,4 @@ Deploy to heruko, and set config variables in the settings:
 APP_SECRET
 APP_CLIENT
 
-whitelist you heruko url in zoom app, and it should work
+whitelist your heruko url in zoom app
